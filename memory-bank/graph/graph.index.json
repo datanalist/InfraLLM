@@ -1,0 +1,31 @@
+{
+  "lastEventLineCount": 15,
+  "snapshotBuiltAt": "2026-05-13T22:14:41.999Z",
+  "jsonlModifiedAt": "2026-05-13T22:14:41.999Z",
+  "stats": {
+    "entityCount": 8,
+    "observationCount": 0,
+    "relationCount": 6,
+    "entityTypes": [
+      "component",
+      "concept",
+      "service"
+    ],
+    "relationTypes": [
+      "contains",
+      "implements",
+      "routes_to",
+      "shares_storage"
+    ]
+  },
+  "nameToEntityId": {
+    "gateway": "ent_kg9Awj84bGpS",
+    "registry": "ent_okrOIUaQJXX_",
+    "mockllm": "ent_m6ZFeVhPmh5d",
+    "router": "ent_MTo9Ps9fkfEm",
+    "circuitbreaker": "ent_Bdx3m268D--k",
+    "a2aprotocol": "ent_cXVbS8djdEHi",
+    "sqlitestorage": "ent_zbg_y2Pf3GCz",
+    "guardrailsmiddleware": "ent_q0VF3r9I1h05"
+  }
+}

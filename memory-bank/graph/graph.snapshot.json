@@ -1,0 +1,201 @@
+{
+  "meta": {
+    "type": "memory_bank_graph",
+    "version": "1",
+    "storeId": "memory-bank",
+    "createdAt": "2026-05-13T22:14:41.991Z",
+    "source": "memory-bank-mcp"
+  },
+  "entities": [
+    {
+      "id": "ent_kg9Awj84bGpS",
+      "name": "Gateway",
+      "entityType": "service",
+      "attrs": {
+        "port": 8000,
+        "role": "data-plane",
+        "apis": [
+          "OpenAI-compat /v1/chat/completions",
+          "A2A /a2a/jsonrpc",
+          "/.well-known/agent.json"
+        ],
+        "file": "gateway/"
+      },
+      "createdAt": "2026-05-13T22:14:18.098Z",
+      "updatedAt": "2026-05-13T22:14:18.098Z"
+    },
+    {
+      "id": "ent_okrOIUaQJXX_",
+      "name": "Registry",
+      "entityType": "service",
+      "attrs": {
+        "port": 8001,
+        "role": "control-plane",
+        "apis": [
+          "/admin/providers",
+          "/admin/a2a/agents"
+        ],
+        "file": "registry/"
+      },
+      "createdAt": "2026-05-13T22:14:19.508Z",
+      "updatedAt": "2026-05-13T22:14:19.508Z"
+    },
+    {
+      "id": "ent_m6ZFeVhPmh5d",
+      "name": "MockLLM",
+      "entityType": "service",
+      "attrs": {
+        "ports": [
+          9001,
+          9002
+        ],
+        "variants": [
+          "mock-fast ~50ms",
+          "mock-slow ~500ms"
+        ],
+        "file": "mock-llm/"
+      },
+      "createdAt": "2026-05-13T22:14:21.088Z",
+      "updatedAt": "2026-05-13T22:14:21.088Z"
+    },
+    {
+      "id": "ent_MTo9Ps9fkfEm",
+      "name": "Router",
+      "entityType": "component",
+      "attrs": {
+        "strategies": [
+          "round-robin",
+          "weighted",
+          "latency-EMA",
+          "priority"
+        ],
+        "file": "gateway/core/router.py"
+      },
+      "createdAt": "2026-05-13T22:14:22.516Z",
+      "updatedAt": "2026-05-13T22:14:22.516Z"
+    },
+    {
+      "id": "ent_Bdx3m268D--k",
+      "name": "CircuitBreaker",
+      "entityType": "component",
+      "attrs": {
+        "trip_threshold": "3x 5xx",
+        "eviction_seconds": 30,
+        "states": [
+          "closed",
+          "open",
+          "half-open"
+        ],
+        "metric": "infrallm_circuit_state",
+        "file": "gateway/core/circuit_breaker.py"
+      },
+      "createdAt": "2026-05-13T22:14:24.071Z",
+      "updatedAt": "2026-05-13T22:14:24.071Z"
+    },
+    {
+      "id": "ent_cXVbS8djdEHi",
+      "name": "A2AProtocol",
+      "entityType": "concept",
+      "attrs": {
+        "version": "v0.1 MVP",
+        "methods": [
+          "tasks/send",
+          "tasks/get",
+          "tasks/cancel",
+          "tasks/sendSubscribe"
+        ],
+        "excluded": [
+          "push notifications",
+          "file artifacts",
+          "multi-turn streaming",
+          "sub-tasks"
+        ]
+      },
+      "createdAt": "2026-05-13T22:14:25.598Z",
+      "updatedAt": "2026-05-13T22:14:25.598Z"
+    },
+    {
+      "id": "ent_zbg_y2Pf3GCz",
+      "name": "SQLiteStorage",
+      "entityType": "component",
+      "attrs": {
+        "mode": "WAL",
+        "orm": "SQLModel",
+        "tables": [
+          "provider",
+          "auth_token",
+          "a2a_task"
+        ],
+        "shared_via": "Docker volume bind ./data"
+      },
+      "createdAt": "2026-05-13T22:14:26.937Z",
+      "updatedAt": "2026-05-13T22:14:26.937Z"
+    },
+    {
+      "id": "ent_q0VF3r9I1h05",
+      "name": "GuardrailsMiddleware",
+      "entityType": "component",
+      "attrs": {
+        "library": "llm-guard",
+        "pre_scanners": [
+          "PromptInjection",
+          "Secrets",
+          "BanSubstrings",
+          "TokenLimit"
+        ],
+        "post_scanners": [
+          "Secrets"
+        ],
+        "plan_b": "regex-only if image > 1GB",
+        "file": "gateway/middleware/guardrails.py"
+      },
+      "createdAt": "2026-05-13T22:14:28.680Z",
+      "updatedAt": "2026-05-13T22:14:28.680Z"
+    }
+  ],
+  "observations": [],
+  "relations": [
+    {
+      "id": "rel_L9emC5JmUjtY",
+      "fromId": "ent_kg9Awj84bGpS",
+      "toId": "ent_MTo9Ps9fkfEm",
+      "relationType": "contains",
+      "createdAt": "2026-05-13T22:14:33.757Z"
+    },
+    {
+      "id": "rel_vo_OJz5ve9Pg",
+      "fromId": "ent_kg9Awj84bGpS",
+      "toId": "ent_Bdx3m268D--k",
+      "relationType": "contains",
+      "createdAt": "2026-05-13T22:14:35.148Z"
+    },
+    {
+      "id": "rel_THdevsDrAzz9",
+      "fromId": "ent_kg9Awj84bGpS",
+      "toId": "ent_q0VF3r9I1h05",
+      "relationType": "contains",
+      "createdAt": "2026-05-13T22:14:36.485Z"
+    },
+    {
+      "id": "rel_0YzB80rCrDg1",
+      "fromId": "ent_kg9Awj84bGpS",
+      "toId": "ent_cXVbS8djdEHi",
+      "relationType": "implements",
+      "createdAt": "2026-05-13T22:14:37.899Z"
+    },
+    {
+      "id": "rel_wCa2289Z9uH3",
+      "fromId": "ent_kg9Awj84bGpS",
+      "toId": "ent_m6ZFeVhPmh5d",
+      "relationType": "routes_to",
+      "createdAt": "2026-05-13T22:14:39.121Z"
+    },
+    {
+      "id": "rel_b1FFQFoq72bj",
+      "fromId": "ent_kg9Awj84bGpS",
+      "toId": "ent_zbg_y2Pf3GCz",
+      "relationType": "shares_storage",
+      "createdAt": "2026-05-13T22:14:40.569Z"
+    }
+  ]
+}
